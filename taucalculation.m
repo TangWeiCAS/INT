@@ -24,16 +24,17 @@ subj=[9005
 9075];
 max=120;%according to Neuroimage, 100 timepoints
 for m=1:length(subj)
-    cd /home/weissley/桌面/timeseries/
+    cd /home/weissley/桌面/INT/
     file=readmatrix(['sub-',num2str(subj(m)),'_normal_timeseries.csv']);
-    cd /home/weissley/桌面/timeseries/tau/
+    cd /home/weissley/桌面/INT/tau/
     acwvalue=cell(1056,1);
     for i=1:length(file(1,:))
         temp=[];
         ts=file(:,i);
         if ~isnan(file(1,i))
             [~,~,acf,lags]=acw(ts', 0.5, 0);
-            temp=[acf(1:max)',lags(1:max)'];
+            temp=[acf(2:(max+1))',lags(2:(max+1))'];
+            %temp=[acf(1:max)',lags(1:max)'];
             acwvalue{i}=temp;
         else
             acwvalue{i}=[NaN(max,1),NaN(max,1)];
@@ -47,7 +48,7 @@ for m=1:length(subj)
         R = acwvalue{i}(:,1); % 你的观测数据
         if (~isnan(R(1)))%是有值的才算，没有的直接归nan
             % 初始参数估计值
-            initialParams = [1, 0, 1]; % A=1, B=0, x=1
+            initialParams = [1, 0, 1]; % A=1, B=0, K=1
             ft=fittype('modelfunc(x, A, B, k)');
             % 尝试拟合数据
             try
@@ -67,11 +68,13 @@ for m=1:length(subj)
         % 跑完检查拟合参数是否为NaN
         if (isnan(fitParams.k))
             %warning('拟合未成功，返回NaN值');
+            tau(i,1)=i;
         else
             tau(i,:)=[i,fitParams.A,fitParams.B,fitParams.k,gof.rsquare];
         end
     end
-    writematrix(tau,['sub-',num2str(subj(m)),'_SCD_tau.csv']);
+    writematrix(tau,['sub-',num2str(subj(m)),'_SCD_tau2.csv']);
+    %writematrix(tau,['sub-',num2str(subj(m)),'_SCD_tau.csv']);
 end
 %%
 %NC
@@ -104,16 +107,17 @@ subj=[9003
 9072
 9076];
 for m=1:length(subj)
-    cd /home/weissley/桌面/timeseries/
-    file=readmatrix(['sub-',num2str(subj(m)),'_normal_timeseries.csv']);
-    cd /home/weissley/桌面/timeseries/tau/
+    cd /home/weissley/桌面/INT/
+    file=readmatrix(['sub-',num2str(subj(m)),'_raw_timeseries.csv']);
+    cd /home/weissley/桌面/INT/tau/
     acwvalue=cell(1056,1);
     for i=1:length(file(1,:))
         temp=[];
         ts=file(:,i);
         if ~isnan(file(1,i))
             [~,~,acf,lags]=acw(ts', 0.5, 0);
-            temp=[acf(1:max)',lags(1:max)'];
+            temp=[acf(2:(max+1))',lags(2:(max+1))'];
+            %temp=[acf(1:max)',lags(1:max)'];
             acwvalue{i}=temp;
         else
             acwvalue{i}=[NaN(max,1),NaN(max,1)];
@@ -127,7 +131,7 @@ for m=1:length(subj)
         R = acwvalue{i}(:,1); % 你的观测数据
         if (~isnan(R(1)))%是有值的才算，没有的直接归nan
             % 初始参数估计值
-            initialParams = [1, 0, 1]; % A=1, B=0, x=1
+            initialParams = [1, 0, 1]; % A=1, B=0, K=1
             ft=fittype('modelfunc(x, A, B, k)');
             % 尝试拟合数据
             try
@@ -147,9 +151,11 @@ for m=1:length(subj)
         % 跑完检查拟合参数是否为NaN
         if (isnan(fitParams.k))
             %warning('拟合未成功，返回NaN值');
+            tau(i,1)=i;
         else
             tau(i,:)=[i,fitParams.A,fitParams.B,fitParams.k,gof.rsquare];
         end
     end
-    writematrix(tau,['sub-',num2str(subj(m)),'_NC_tau.csv']);
+    writematrix(tau,['sub-',num2str(subj(m)),'_NC_tau2.csv']);
+    %writematrix(tau,['sub-',num2str(subj(m)),'_NC_tau.csv']);
 end
