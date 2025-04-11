@@ -1,12 +1,10 @@
 clear;clc;
 %SCD
 subj=[9005
-9014
 9020
 9022
 9024
 9026
-9027
 9028
 9037
 9038
@@ -20,32 +18,30 @@ subj=[9005
 9063
 9065
 9066
-9074
 9075];
-max=120;%according to Neuroimage, 100 timepoints
+max=150;%according to Neuroimage, 100 timepoints
 for m=1:length(subj)
-    cd /home/weissley/桌面/INT/
-    file=readmatrix(['sub-',num2str(subj(m)),'_normal_timeseries.csv']);
-    cd /home/weissley/桌面/INT/tau/
-    acwvalue=cell(1056,1);
+    cd /home/weissley/桌面/400p/INT/
+    file=readmatrix(['sub-',num2str(subj(m)),'_task-rest_run-01_space-fsLR_seg-4S456Parcels_stat-mean_timeseries.csv']);
+    cd /home/weissley/桌面/400p/codes
+    acwvalue=cell(400,1);
     for i=1:length(file(1,:))
         temp=[];
         ts=file(:,i);
         if ~isnan(file(1,i))
             [~,~,acf,lags]=acw(ts', 0.5, 0);
             temp=[acf(2:(max+1))',lags(2:(max+1))'];
-            %temp=[acf(1:max)',lags(1:max)'];
             acwvalue{i}=temp;
         else
             acwvalue{i}=[NaN(max,1),NaN(max,1)];
         end
     end
-    %计算1056个parcels的tau值
-    tau=nan(1056,5);
-    for i=1:1056
+    %计算400个parcels的tau值
+    tau=nan(400,5);
+    for i=1:400
         % 假设 k 和 R_values 已经定义并赋值
         x = 0:(max-1);
-        R = acwvalue{i}(:,1); % 你的观测数据
+        R = acwvalue{i}(:,1); % 观测数据
         if (~isnan(R(1)))%是有值的才算，没有的直接归nan
             % 初始参数估计值
             initialParams = [1, 0, 1]; % A=1, B=0, K=1
@@ -73,8 +69,8 @@ for m=1:length(subj)
             tau(i,:)=[i,fitParams.A,fitParams.B,fitParams.k,gof.rsquare];
         end
     end
-    writematrix(tau,['sub-',num2str(subj(m)),'_SCD_tau2.csv']);
-    %writematrix(tau,['sub-',num2str(subj(m)),'_SCD_tau.csv']);
+    cd /home/weissley/桌面/400p/INT/tau/SCD/
+    writematrix(tau,['sub-',num2str(subj(m)),'_tau.csv']);
 end
 %%
 %NC
@@ -104,31 +100,30 @@ subj=[9003
 9068
 9069
 9071
-9072
 9076];
+max=150;%according to Neuroimage, 100 timepoints
 for m=1:length(subj)
-    cd /home/weissley/桌面/INT/
-    file=readmatrix(['sub-',num2str(subj(m)),'_raw_timeseries.csv']);
-    cd /home/weissley/桌面/INT/tau/
-    acwvalue=cell(1056,1);
+    cd /home/weissley/桌面/400p/INT/
+    file=readmatrix(['sub-',num2str(subj(m)),'_task-rest_run-01_space-fsLR_seg-4S456Parcels_stat-mean_timeseries.csv']);
+    cd /home/weissley/桌面/400p/codes
+    acwvalue=cell(400,1);
     for i=1:length(file(1,:))
         temp=[];
         ts=file(:,i);
         if ~isnan(file(1,i))
             [~,~,acf,lags]=acw(ts', 0.5, 0);
             temp=[acf(2:(max+1))',lags(2:(max+1))'];
-            %temp=[acf(1:max)',lags(1:max)'];
             acwvalue{i}=temp;
         else
             acwvalue{i}=[NaN(max,1),NaN(max,1)];
         end
     end
-    %计算1056个parcels的tau值
-    tau=nan(1056,5);
-    for i=1:1056
+    %计算400个parcels的tau值
+    tau=nan(400,5);
+    for i=1:400
         % 假设 k 和 R_values 已经定义并赋值
         x = 0:(max-1);
-        R = acwvalue{i}(:,1); % 你的观测数据
+        R = acwvalue{i}(:,1); % 观测数据
         if (~isnan(R(1)))%是有值的才算，没有的直接归nan
             % 初始参数估计值
             initialParams = [1, 0, 1]; % A=1, B=0, K=1
@@ -156,6 +151,6 @@ for m=1:length(subj)
             tau(i,:)=[i,fitParams.A,fitParams.B,fitParams.k,gof.rsquare];
         end
     end
-    writematrix(tau,['sub-',num2str(subj(m)),'_NC_tau2.csv']);
-    %writematrix(tau,['sub-',num2str(subj(m)),'_NC_tau.csv']);
+    cd /home/weissley/桌面/400p/INT/tau/NC/
+    writematrix(tau,['sub-',num2str(subj(m)),'_tau.csv']);
 end
