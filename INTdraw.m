@@ -1,19 +1,17 @@
 %INT
 %SCD
 clear;clc;
-cd /home/weissley/桌面/timeseries/
-SCD= readmatrix('INT_SCD.csv');
-SCD=SCD(1:1000,:);
-labeling = load_parcellation('schaefer',1000);
-labeling = labeling.schaefer_1000;
+SCD= readmatrix('/home/weissley/桌面/400p/INT/tau/SCD/sub-9005_tau.csv');
+SCD=SCD(1:400,:);
+labeling = load_parcellation('schaefer',400);
+labeling = labeling.schaefer_400;
 [surf_lh, surf_rh] = load_conte69('inflated');
 load('vikO.mat');
-%clim([5 13]);
 %NC
-NC= readmatrix('INT_NC.csv');
-NC=NC(1:1000,:);
-h1=plot_hemispheres([SCD(:,3),NC(:,3)],{surf_lh,surf_rh}, ...
+NC= readmatrix('/home/weissley/桌面/400p/INT/tau/NC/sub-9004_tau.csv');
+NC=NC(1:400,:);
+h1=plot_hemispheres([SCD(:,4),NC(:,4)],{surf_lh,surf_rh}, ...
              'parcellation', labeling, ...
-             'labeltext',{'SCD ACW_0','NC ACW_0'});
-colormap(h1.handles.figure,[.7 .7 .7;vikO]);
-%clim([5 13]);
+             'labeltext',{'SCD tau','NC tau'});
+colormap(h1.handles.figure,[.4 .4 .4 ;vikO]);
+%1-31, 201-230 visual
